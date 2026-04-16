@@ -1,0 +1,7 @@
+build/
+*.o
+*.out
+*.exe
+radix_test
+a.out
+.DS_Store
