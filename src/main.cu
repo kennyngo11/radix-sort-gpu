@@ -1,27 +1,29 @@
 #include <iostream>
 #include <cuda_runtime.h>
-
-__global__ void testKernel(int *data) {
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    data[idx] = idx;
-}
+#include <cstdint>
+#include "../include/radix_sort.cuh"
 
 int main() {
-    const int N = 16;
-    int *d_data;
-    int h_data[N];
+    const int N = 8;
+    uint32_t h_input[N] = {0, 1, 2, 3, 4, 5, 6, 7};
 
-    cudaMalloc(&d_data, N * sizeof(int));
+    uint32_t *d_input, *d_hist;
+    uint32_t h_hist[RADIX_SIZE];
 
-    testKernel<<<1, N>>>(d_data);
+    cudaMalloc(&d_input, N * sizeof(uint32_t));
+    cudaMalloc(&d_hist, RADIX_SIZE * sizeof(uint32_t));
 
-    cudaMemcpy(h_data, d_data, N * sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(d_input, h_input, N * sizeof(uint32_t), cudaMemcpyHostToDevice);
 
-    for (int i = 0; i < N; i++) {
-        std::cout << h_data[i] << " ";
+    histogram_kernel(d_input, d_hist, N, 0);
+
+    cudaMemcpy(h_hist, d_hist, RADIX_SIZE * sizeof(uint32_t), cudaMemcpyDeviceToHost);
+
+    for (int i = 0; i < RADIX_SIZE; i++) {
+        std::cout << "bin " << i << ": " << h_hist[i] << std::endl;
     }
-    std::cout << std::endl;
 
-    cudaFree(d_data);
+    cudaFree(d_input);
+    cudaFree(d_hist);
     return 0;
 }
