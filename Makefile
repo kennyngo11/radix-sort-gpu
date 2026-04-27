@@ -1,9 +1,11 @@
 NVCC = nvcc
+NVCCFLAGS = -O2 -arch=sm_86
+
 TARGET = radix_test
-SRC = src/main.cu
+SRC = src/main.cu src/radix_sort.cu src/histogram.cu src/scan.cu src/scatter.cu
 
 all:
-	$(NVCC) -O3 -o $(TARGET) $(SRC)
+	$(NVCC) $(NVCCFLAGS) $(SRC) -o $(TARGET)
 
 run: all
 	./$(TARGET)

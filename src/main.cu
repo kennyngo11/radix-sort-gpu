@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <cuda_runtime.h>
 #include <algorithm>
 #include <cstdint>
@@ -48,32 +47,4 @@ int main() {
     cudaFree(d_input);
     cudaFree(d_output);
     return ok ? 0 : 1;
-=======
-#include <iostream>
-#include <cuda_runtime.h>
-
-__global__ void testKernel(int *data) {
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    data[idx] = idx;
-}
-
-int main() {
-    const int N = 16;
-    int *d_data;
-    int h_data[N];
-
-    cudaMalloc(&d_data, N * sizeof(int));
-
-    testKernel<<<1, N>>>(d_data);
-
-    cudaMemcpy(h_data, d_data, N * sizeof(int), cudaMemcpyDeviceToHost);
-
-    for (int i = 0; i < N; i++) {
-        std::cout << h_data[i] << " ";
-    }
-    std::cout << std::endl;
-
-    cudaFree(d_data);
-    return 0;
->>>>>>> 57446c7b9ff1ffb726f46b7d2f4a874cf5e6d5bd
 }
